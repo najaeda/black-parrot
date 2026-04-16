@@ -14,12 +14,15 @@ jobs:
     steps:
       - name: Checkout latest repository tree
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Checkout reference repository tree
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           path: reference
+          submodules: recursive
 
       - name: Prepare BlackParrot RTL bundles
         run: |
@@ -36,7 +39,7 @@ jobs:
 
       - name: Run kepler-formal BlackParrot comparison
         id: kepler
-        uses: najaeda/kepler-formal-action@204a980eb4d5bd9dc9d4d88d3e5564f32c2310c4
+        uses: najaeda/kepler-formal-action@main
         with:
           config-path: ci/kepler-formal/generated/self-compare.yaml
           artifact-dir: .artifacts/kepler-formal/self-compare
