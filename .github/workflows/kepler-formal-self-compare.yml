@@ -24,17 +24,16 @@ jobs:
           path: reference
           submodules: recursive
 
-      - name: Prepare BlackParrot RTL bundles
+      - name: Prepare BlackParrot RTL flists
         run: |
-          bash ci/kepler-formal/prepare-bundle.sh . .kepler-formal-src/latest
-          bash ci/kepler-formal/prepare-bundle.sh reference .kepler-formal-src/reference
-          mkdir -p ci/kepler-formal/generated
+          bash ci/kepler-formal/prepare-flist.sh . ci/kepler-formal/generated/self-compare.latest.f
+          bash ci/kepler-formal/prepare-flist.sh reference ci/kepler-formal/generated/self-compare.reference.f
           cat > ci/kepler-formal/generated/self-compare.yaml <<'EOF'
           format: systemverilog
-          verilog_preprocessing: true
-          input_paths:
-            - [.kepler-formal-src/latest/bp_common_pkg.sv, .kepler-formal-src/latest/bp_bedrock_size_to_len.sv]
-            - [.kepler-formal-src/reference/bp_common_pkg.sv, .kepler-formal-src/reference/bp_bedrock_size_to_len.sv]
+          sv_design1_flist: ci/kepler-formal/generated/self-compare.latest.f
+          sv_design1_top: bp_multicore
+          sv_design2_flist: ci/kepler-formal/generated/self-compare.reference.f
+          sv_design2_top: bp_multicore
           EOF
 
       - name: Run kepler-formal BlackParrot comparison
