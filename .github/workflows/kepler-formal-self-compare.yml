@@ -13,12 +13,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout latest repository tree
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
       - name: Checkout reference repository tree
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.sha }}
           path: reference
@@ -45,7 +45,7 @@ jobs:
 
       - name: Upload kepler-formal artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: kepler-formal-self-compare
           path: ${{ steps.kepler.outputs.artifact-dir }}

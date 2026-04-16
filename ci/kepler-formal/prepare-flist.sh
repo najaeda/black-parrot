@@ -34,12 +34,12 @@ for extra_file in "${extra_files[@]}"; do
     exit 1
   fi
 
-  if ! rg -F -x "$extra_file" "$dst_flist" >/dev/null; then
+  if ! grep -F -x "$extra_file" "$dst_flist" >/dev/null; then
     printf '%s\n' "$extra_file" >> "$dst_flist"
   fi
 done
 
-if rg -n '\$BP_DIR' "$dst_flist" >/dev/null; then
+if grep -n '\$BP_DIR' "$dst_flist" >/dev/null; then
   echo "Failed to rewrite all \$BP_DIR placeholders in $dst_flist" >&2
   exit 1
 fi
