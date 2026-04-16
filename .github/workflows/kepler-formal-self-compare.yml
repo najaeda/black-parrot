@@ -1,0 +1,50 @@
+name: kepler-formal-blackparrot-self-compare
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-compare:
+    name: Compare BlackParrot RTL with itself
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout latest repository tree
+        uses: actions/checkout@v4
+
+      - name: Checkout reference repository tree
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: reference
+
+      - name: Prepare BlackParrot RTL bundles
+        run: |
+          bash ci/kepler-formal/prepare-bundle.sh . .kepler-formal-src/latest
+          bash ci/kepler-formal/prepare-bundle.sh reference .kepler-formal-src/reference
+          mkdir -p ci/kepler-formal/generated
+          cat > ci/kepler-formal/generated/self-compare.yaml <<'EOF'
+          format: systemverilog
+          verilog_preprocessing: true
+          input_paths:
+            - [.kepler-formal-src/latest/bp_common_pkg.sv, .kepler-formal-src/latest/bp_bedrock_size_to_len.sv]
+            - [.kepler-formal-src/reference/bp_common_pkg.sv, .kepler-formal-src/reference/bp_bedrock_size_to_len.sv]
+          EOF
+
+      - name: Run kepler-formal BlackParrot comparison
+        id: kepler
+        uses: najaeda/kepler-formal-action@204a980eb4d5bd9dc9d4d88d3e5564f32c2310c4
+        with:
+          config-path: ci/kepler-formal/generated/self-compare.yaml
+          artifact-dir: .artifacts/kepler-formal/self-compare
+
+      - name: Upload kepler-formal artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kepler-formal-self-compare
+          path: ${{ steps.kepler.outputs.artifact-dir }}
+          if-no-files-found: warn

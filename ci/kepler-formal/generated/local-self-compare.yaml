@@ -1,0 +1,4 @@
+format: systemverilog
+input_paths:
+  - [.kepler-formal-src/latest-local/bp_common_pkg.sv, .kepler-formal-src/latest-local/bp_bedrock_size_to_len.sv]
+  - [.kepler-formal-src/latest-local/bp_common_pkg.sv, .kepler-formal-src/latest-local/bp_bedrock_size_to_len.sv]
