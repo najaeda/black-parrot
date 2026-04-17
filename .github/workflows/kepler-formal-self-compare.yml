@@ -43,22 +43,13 @@ jobs:
           config-path: ci/kepler-formal/generated/self-compare.yaml
           artifact-dir: .artifacts/kepler-formal/self-compare
 
-      - name: Stage generated flists in artifacts
-        if: always()
-        run: |
-          artifact_dir='${{ steps.kepler.outputs.artifact-dir }}'
-          if [[ -z "$artifact_dir" ]]; then
-            artifact_dir='.artifacts/kepler-formal/self-compare'
-          fi
-
-          mkdir -p "$artifact_dir"
-          cp ci/kepler-formal/generated/self-compare.latest.f "$artifact_dir"/
-          cp ci/kepler-formal/generated/self-compare.reference.f "$artifact_dir"/
-
       - name: Upload kepler-formal artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: kepler-formal-self-compare
-          path: .artifacts/kepler-formal/self-compare
+          path: |
+            .artifacts/kepler-formal/self-compare
+            ci/kepler-formal/generated/self-compare.latest.f
+            ci/kepler-formal/generated/self-compare.reference.f
           if-no-files-found: warn
