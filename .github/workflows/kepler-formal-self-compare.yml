@@ -43,13 +43,25 @@ jobs:
           config-path: ci/kepler-formal/generated/self-compare.yaml
           artifact-dir: .artifacts/kepler-formal/self-compare
 
+      - name: Stage flat upload bundle
+        if: always()
+        run: |
+          upload_dir=.artifacts-upload/kepler-formal/self-compare
+          action_artifact_dir=.artifacts/kepler-formal/self-compare
+
+          mkdir -p "$upload_dir"
+
+          if [[ -d "$action_artifact_dir" ]]; then
+            cp -R "$action_artifact_dir"/. "$upload_dir"/
+          fi
+
+          cp ci/kepler-formal/generated/self-compare.latest.f "$upload_dir"/
+          cp ci/kepler-formal/generated/self-compare.reference.f "$upload_dir"/
+
       - name: Upload kepler-formal artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: kepler-formal-self-compare
-          path: |
-            .artifacts/kepler-formal/self-compare
-            ci/kepler-formal/generated/self-compare.latest.f
-            ci/kepler-formal/generated/self-compare.reference.f
+          path: .artifacts-upload/kepler-formal/self-compare
           if-no-files-found: warn
